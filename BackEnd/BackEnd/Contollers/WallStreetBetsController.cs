@@ -5,9 +5,6 @@ using System.Linq;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-// NOTE: made changes and proposed changes to variable names to another pattern.
-// TODO: add function for DateTime in Notes, add current time to _Note in AddNote and EditNote
-
 namespace BackEnd.Contollers
 {
 	[Route("api/[controller]")]
@@ -16,18 +13,11 @@ namespace BackEnd.Contollers
 	{
 		// PROPERTIES //
 
-		// MarketStack
-		private List<string> MarketStackKeys = new List<string>{
-			"208302dbe2d07c780ba4de2dc30c56ba"
-		};
-
 		// Database
 		private readonly WallStreetBetsContext _context;
-
 		// ==================================================================================================== //
 
 		// METHODS //
-
 		public WallStreetBetsController(WallStreetBetsContext context)
 		{
 			_context = context;
@@ -36,6 +26,8 @@ namespace BackEnd.Contollers
 		// CRUD FUNCTIONS
 
 		// User table
+		// NOTE: This is a piece of code that retrieves info from our database.
+
 		// function reads the list of Users.
 		[HttpGet]
 		public IEnumerable<User> GetUsers()
@@ -45,14 +37,13 @@ namespace BackEnd.Contollers
 
 		// function adds User.
 		[HttpPost]
-		//public void AddUser(int _id, string _username, string _first_name)		// TODO: change?
-		public void PostUser(int _id, string _username, string _first_name)
+		//public void AddUser(string _username, string _first_name)		// TODO: change?
+		public void PostUser(string _username, string _first_name)
 		{
-			List<User> _Users = _context.Users.ToList();
-
 			User _User = new User();
 			_User.username = _username;
 			_User.first_name = _first_name;
+
 			_context.Users.Add(_User);
 			_context.SaveChanges();
 			// URL: https://localhost:7262/api/WallStreetBets?username=jeffcogs&first_name=jeff
@@ -60,27 +51,24 @@ namespace BackEnd.Contollers
 
 		// function edits User.
 		[HttpPut]
-		public void EditUser(int _id, string _username, string _first_name)		// NOTE: NOT tested!
+		public void EditUser(int _id, string _username, string _first_name)     // NOTE: WORKS!
 		{
 			List<User> _Users = _context.Users.ToList();
+
 			// subfunction checks for change in User.
 			if (_username == _Users[_id].username && _first_name == _Users[_id].first_name)
 			{
-				return;	// If no change, exit function now.
+				return; // If no change, exit function now.
 			}
+
 			// subfunction verifies input.
 			for (int i = 0; i < _Users.Count; i++)
 			{
-				/*
-				if (_id == i && _id != _Users[i].id && _username == _Users[i].username)
-				{
-					return;	// If _id exists, _id is NOT valid, and username exists, exit function now.	// NOTE: Because _id is an input parameter, it is safe to NOT assume it is pre validated.
-				}
-				*/
 				if (_id == _Users[i].id)
 				{
 					_Users[_id].username = _username;
 					_Users[_id].first_name = _first_name;
+
 					_context.Users.Update(_Users[_id]);
 					_context.SaveChanges();
 					return; // If match exists, edit user, and exit function now.
@@ -93,17 +81,16 @@ namespace BackEnd.Contollers
 		public void DeleteUser(int _id)
 		{
 			List<User> _Users = _context.Users.ToList();
+
 			for (int i = 0; i < _Users.Count; i++)
 			{
 				if (_id == _Users[i].id)
 				{
-					// TODO: recursive call DeleteNote(), and DeleteFavorite() here?
-					//_context.Users.Remove(_Users.ElementAt(_id));		// TODO: change?
-					//_context.SaveChanges();
 					User _User = _Users[i];
-					_context.Users.Remove(_User);
-					return;     // If match exists, delete user, and exit function now.
 
+					_context.Users.Remove(_User);
+					_context.SaveChanges();
+					return;     // If match exists, delete user, and exit function now.
 				}
 			}
 		}
@@ -122,21 +109,25 @@ namespace BackEnd.Contollers
 		// function creates Favorite, assigns to a User.
 		[Route("favorites")]
 		[HttpPost]
-		public void AddFav(string _username, string _ticker)
+		public Favorite AddFav(string _username, string _ticker)
 		{
 			List<Favorite> _Favorites = _context.Favorites.ToList();
+
 			for (int i = 0; i < _Favorites.Count; i++)
 			{
 				if (_username == _Favorites[i].username && _ticker == _Favorites[i].ticker)
 				{
-					return; // If match exists, exit function now.
+					return null; // If match exists, exit function now.
 				}
 			}
 			Favorite _Favorite = new Favorite();
 			_Favorite.username = _username;
 			_Favorite.ticker = _ticker;
+			//_Favorite.note_ids = new List<int>();
+
 			_context.Favorites.Add(_Favorite);
 			_context.SaveChanges();
+			return _Favorite;
 		}
 
 		// function deletes Favorite.
@@ -145,6 +136,7 @@ namespace BackEnd.Contollers
 		public void DeleteFav(string _username, string _ticker)
 		{
 			List<Favorite> _Favorites = _context.Favorites.ToList();
+
 			for (int i = 0; i < _Favorites.Count; i++)
 			{
 				if (_username == _Favorites[i].username && _ticker == _Favorites[i].ticker)
@@ -170,15 +162,20 @@ namespace BackEnd.Contollers
 		[Route("notes")]
 		[HttpPost]
 		public void AddNote(int _favorite_id, string _description)
+
 		{
 			List<Favorite> _Favorites = _context.Favorites.ToList();
+
 			for (int i = 0; i < _Favorites.Count; i++)
 			{
 				if (_Favorites[i].id == _favorite_id)
 				{
 					Note _Note = new Note();
 					_Note.description = _description;
+					//_Note.lastEdit = DateTime.Now;
 					_Favorites[i].id = _favorite_id;
+					//_Favorites[i].note_ids.Add(i);	// add current Note to List in Favorite
+
 					_context.Notes.Add(_Note);
 					_context.SaveChanges();
 					return; // If match exists, add note, and exit function now.
@@ -187,53 +184,52 @@ namespace BackEnd.Contollers
 		}
 
 		// function edits Note.
+		// NOTE: this function updates our local database.
 		[Route("notes")]
 		[HttpPut]
 		public void EditNote(int _id, string _description)
 		{
 			List<Note> _Notes = _context.Notes.ToList();
+
 			// subfunction checks for change in Note.
+			// NOTE: NOT tested! unnecessary?
+			/*
 			if (_description == _Notes[_id].description)
 			{
 				return; // If no change, exit function now.
 			}
 			// subfunction verifies input.
 			else
+			*/
 			{
 				for (int i = 0; i < _Notes.Count; i++)
 				{
-					/*
-					if (_id == i && _id != _Notes[i].id)
-					{
-						return; // If _id exists, and _id is NOT valid, exit function now.	// NOTE: Because _id is an input parameter, it is safer to assume it is NOT valid.
-					}
-					*/
 					if (_id == _Notes[i].id)
 					{
-						//Note _Note = _Notes[i];	// NOTE: not necessary?
-						//_Note.description = _description;
-						//_context.Notes.Update(_Note);
 						_Notes[i].description = _description;
+						//_Notes[i].lastEdit = DateTime.Now;
+
 						_context.Notes.Update(_Notes[i]);
 						_context.SaveChanges();
 						return; // If match exists, edit note, and exit function now.
 					}
 				}
-			}	
+			}
 		}
+
 
 		// function deletes Note.
 		[Route("notes")]
 		[HttpDelete]
 		public void DeleteNote(int _id)
 		{
+			List<Favorite> _Favorites = _context.Favorites.ToList();
 			List<Note> _Notes = _context.Notes.ToList();
+
 			for (int i = 0; i < _Notes.Count; i++)
 			{
 				if (_id == _Notes[i].id)
 				{
-					//Note _Note = notesList[i];	// NOTE: not necessary?
-					//_context.Notes.Remove(_Note);
 					_context.Notes.Remove(_Notes[i]);
 					_context.SaveChanges();
 					return; // If match exists, delete note, and exit function now.
@@ -277,7 +273,29 @@ namespace BackEnd.Contollers
 			return json;
 		}
 
-		// MarketStack API
+		// PROPERTIES
+
+		// MarketStack
+		// NOTE: these free API keys each last 100 req/mo.
+		private int MarketStackKeys_index = 0;
+		private List<string> MarketStackKeys = new List<string>{
+			"208302dbe2d07c780ba4de2dc30c56ba",	// Josh
+			"a6b0ab8551d6ead2bb1df2da121ff9d9", // Josh
+			"289ebff0ebb79e4eb51867bfdb76b219",	// email:	https://tempail.com/u/15/jeltacarzi-ddf5c6eb0f/
+			"7b856dedb54e159aeea08aad23f42265",	// email:	https://tempail.com/u/15/jupsaverko-9a026ceb1c/
+			"eb782fa7bc22b33e1258e139d6e05ce8",	// email:	https://tempail.com/u/15/doltematri-3ac489e887/
+			"2a4e4bfd05a49941a6dcb63a50c3e38f",	// email:	https://tempail.com/u/15/jepsukorte-bd4aa6e7ce/
+			"cbe65f3aa68356b26e1954ae6c86c953",	// email:	https://tempail.com/u/15/nerzejupso-d435dcff9b/
+			"4872d1fb598c6c050309337bb9df5b8a", // email:	https://tempail.com/u/15/borzadomla-442f870750/
+			"e2488e8fbbbb3d54d6ad81a7305246c6",	// email:	https://tempail.com/u/15/lupsaremlu-e400fb29de/
+			"b8776c200e6b46a4399f211dc700fad5",	// email:	https://tempail.com/u/15/folmakorzi-1a729ec678/
+			"f7093a91a675633f6b1cc16c1cc4daaa",	// email:	https://tempail.com/u/15/jotrucagno-fac906b376/
+			"a34cc37ee3cef8e26b878ebbf5c9ba87"	// email:	https://tempail.com/u/15/zekkujafye-da40e99b44/
+		};
+
+		// METHODS //
+
+		// MarketStack
 		[Route("marketstack")]
 		[HttpGet]
 		//public async Task<MarketStackObject> GetMarketStack(string _ticker)		// TODO: change?
@@ -287,33 +305,54 @@ namespace BackEnd.Contollers
 			_HttpClient.BaseAddress = new Uri("http://api.marketstack.com/v1/");
 			// EXAMPLE:	http://api.marketstack.com/v1/eod?access_key=208302dbe2d07c780ba4de2dc30c56ba&symbols=DIS&limit=1
 
-			// subfunction cycles List of MarketStack API keys	// NOTE: NOT tested!
-			int index = 0;
-			string result = "";
-			for (int i = 0; i < MarketStackKeys.Count; i++)
-			{
-				// subfunction checks if json and API key are valid
-				// 1. if current element is valid, save element as result
-				if (MarketStackKeys[i] != null && MarketStackKeys[i].Length > 0)
-				{
-					result = MarketStackKeys[i];
-				}
-				// 2. else if previous result is valid and current element is NOT valid, remove current element
-				else if (( result.Length > 0 && result != null ) && ( MarketStackKeys[i].Length <= 0 || MarketStackKeys[i] == null ))
-				{
-					MarketStackKeys.RemoveAt(i);
-				}
-				// 3. else assume last element is NOT valid, save blank result and exit subfunction
-				else
-				{
-					result = "";
-					i = MarketStackKeys.Count;	// exit subfunction
-				}
-			}
-			string url = $"eod?access_key={MarketStackKeys[index]}={_ticker}&limit=1";
+
+			// NOTE: Uncomment if the subfunction does NOT pass!
+
+			// call first API
+			string url = $"eod?access_key={MarketStackKeys[1]}={_ticker}&limit=1";
 			var connection = await _HttpClient.GetAsync(url);
 			MarketStackObject _MarketStackObject = await connection.Content.ReadAsAsync<MarketStackObject>();
-			return _MarketStackObject;
+
+			// NOTE: Subfunction has NOT been tested!
+
+			/*
+            // check if current object is valid
+            if (_MarketStackObject != null)
+            {
+                MarketStackKeys_index = 1;
+                return _MarketStackObject;  // NOTE: I assume it either has the correct data or the API key has temporarily expired.
+            }
+
+            // call API list, starting with the last known good API key (default index: 0)
+            bool secondLoop = false;
+            for (int i = MarketStackKeys_index; i < MarketStackKeys.Count; i++)
+            {
+                MarketStackKeys_index = i;
+                url = $"eod?access_key={MarketStackKeys[i]}={_ticker}&limit=1";
+                connection = await _HttpClient.GetAsync(url);
+                _MarketStackObject = await connection.Content.ReadAsAsync<MarketStackObject>();
+
+                // loop again if started from index zero (example: loop started at end of list).
+                if (secondLoop == false && i == (MarketStackKeys.Count - 1))
+                {
+                    secondLoop = true;  // rerun loop if you meet 
+                }
+
+                // check if current object is valid, and function now.
+                if (_MarketStackObject != null)
+                {
+                    return _MarketStackObject;
+                }
+
+                // STOP loop from looping more than once (example: loop started after index zero).
+                if (secondLoop && MarketStackKeys_index == i && _MarketStackObject == null)
+                {
+                    break;
+                }
+            }
+            */
+
+			return _MarketStackObject;  // NOTE: check if any or all API keys are NOT valid.			
 		}
 		// ==================================================================================================== //
 	}

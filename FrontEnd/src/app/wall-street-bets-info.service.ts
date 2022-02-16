@@ -7,9 +7,14 @@ import { WallStreetBetsInfo } from './wall-street-bets-info';
 })
 export class WallStreetBetsInfoService {
 
-  constructor(private http: HttpClient) { }
+  // METHODS //
+  
+  // DEPENENCIES
+  constructor(private _HttpClient: HttpClient) { }
 
-  retrieveWallStreetBetsInfo(cb: any) {
-    this.http.get<WallStreetBetsInfo[]>('https://localhost:7262/api/WallStreetBets/nbshare').subscribe(cb);
+  // CRUD FUNCTIONS
+  get(cb: any) {
+  //retrieveWallStreetBetsInfo(cb: any) {
+    this._HttpClient.get<WallStreetBetsInfo[]>('https://localhost:7262/api/WallStreetBets/nbshare').subscribe(cb);
   }
 }
