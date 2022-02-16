@@ -27,7 +27,7 @@ export class LoginComponent implements OnInit {
   signUpVisible: boolean = false;
   deleteVisible: boolean = false;
   editVisible: boolean = false;
-  // ========== //
+  // ================================================================================ //
 
   // METHODS //
 
@@ -60,17 +60,17 @@ export class LoginComponent implements OnInit {
     this._UserService.post(this._User, this.Users);
   }
 
-  // TODO: looks good, add CRUD to BackEnd Controller from alexbranch 
-  /*
+  // TODO: test
   delete() {
-    this._UserService.delete(this._User);
+    this._UserService.delete(this._User, this.Users);
   }
-  */
   
   // post
   add() {
+
     // refresh List
     this.get();
+
     // add to List
     this.post();
   };
@@ -79,6 +79,7 @@ export class LoginComponent implements OnInit {
   edit() {
     // refresh List
     this.getAll();
+
     // sort List for username match, if true exit now.
     for(var i: number = 0; i < this.Users.length; i++)
     {
@@ -93,44 +94,55 @@ export class LoginComponent implements OnInit {
         break;
       }
     }
+
     // no match
     alert(`"${this._username}" is available.`);
+
     // edit User
     this._User.username = this._username;
     this._User.first_name = this._firstName;
+
     // put
     this.put();
     alert(`Success! User updated.`)
   }
 
   // delete
+  // TODO: not tested!
   deleteThis() {
     // refresh List
     this.getAll();
-    // sort List for username match, if true exit now.
+    // sort List for username match, if true delete user.
     for(var i: number = 0; i < this.Users.length; i++)
     {
-      while (i != this._User.id)
+      // match
+      if(this._username == this.Users[i].username && this._firstName == this.Users[i].first_name)
       {
-        if(this._username == this.Users[i].username)
-        {
-          alert(`Failure! Username is already taken.`)
-          this._username = '';
-          return;
-        }
-        break;
+        // delete user
+        this._User.username = this._username;
+        this._User.first_name = this._firstName;
+        // delete
+        this.delete();
+        alert(`Authenticated! User deleted.`)
       }
+
+      // NOTE: this code is NOT necessary, but requires a known index of the user to function.
+      /*  
+      else if(this._username != this.Users[i].username && this._firstName == this.Users[i].first_name)
+      {
+        alert(`Failure! Username mis-match.`)
+      }
+      else if(this._username == this.Users[i].username && this._firstName != this.Users[i].first_name)
+      {
+        alert(`Failure! First-name mis-match.`)
+      }
+      */
+
     }
     // no match
-    alert(`"${this._username}" is available.`);
-    // edit User
-    this._User.username = this._username;
-    this._User.first_name = this._firstName;
-    // put
-    this.put();
-    alert(`Success! User updated.`)
+    alert(`"Not Authenticated! Username and/or First-name mis-match!`);
   }
-  // ========== //
+  // ================================================================================ //
 
   // FUNCTIONS
 
@@ -138,6 +150,7 @@ export class LoginComponent implements OnInit {
   signIn() {
     // refresh List
     this.getAll();
+
     // sort List for match. If true, sign-in success.
     for(var i: number = 0; i < this.Users.length; i++)
     {
@@ -158,15 +171,16 @@ export class LoginComponent implements OnInit {
   signOut() {
     this.login(false);
     alert(`User signed out. Good bye.`)
+
     // auto re-direct
     //this._Router.navigate(['/']); // NOTE: leave as is.
-    return;
   }
 
   // function checks if user does NOT exist, and signs up new user.
   signUp() {
     // refresh List
     this.getAll();
+
     // sort List for match. If true, sign-up failure.
     for(var i: number = 0; i < this.Users.length; i++)
     {
@@ -177,9 +191,11 @@ export class LoginComponent implements OnInit {
         return;
       }
     }
+
     // add User
     this.add();
     alert(`Success! Registration complete.`)
+
     // auto sign-in
     this.signIn();
   }
@@ -191,15 +207,16 @@ export class LoginComponent implements OnInit {
 
   // TOGGLES
   toggleEdit() {
-    if(this.deleteVisible){
+    if(this.deleteVisible) {
       this.toggleDelete();
     }
+
     this.editVisible = !this.editVisible;
   }
 
   toggleDelete() {
     
-    if(this.editVisible){
+    if(this.editVisible) {
       this.toggleEdit();
     }
     this.deleteVisible = !this.deleteVisible;
@@ -208,5 +225,4 @@ export class LoginComponent implements OnInit {
   toggleSignUp() {
       this.signUpVisible = !this.signUpVisible;
   }
-  // ========== //
 }

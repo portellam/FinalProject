@@ -56,11 +56,11 @@ export class UserService {
     this._HttpClient.put<User>(`https://localhost:7262/api/WallStreetBets?username=${_User.username}&first_name=${_User.first_name}`, _User).subscribe(cb);
   }
 
-  // TODO: add DeleteUser from alexbranch
-  /*
+  // TODO: NOT tested! 
+  // NOTE: allow a user to delete account, use username andn firstName as authentication.
   delete(_User: User, cb: any) {
-    this._HttpClient.delete<User>(`https://localhost:7262/api/WallStreetBets?username=${_User.username}&first_name=${_User.first_name}`, _User).subscribe(cb);
+    this._HttpClient.delete<User>(`https://localhost:7262/api/WallStreetBets?username=${_User.username}&first_name=${_User.first_name}`).subscribe(cb);
   }
-  */
+  
   // ========== //
 }

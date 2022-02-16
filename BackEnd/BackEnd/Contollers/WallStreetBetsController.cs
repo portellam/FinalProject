@@ -78,13 +78,13 @@ namespace BackEnd.Contollers
 
 		// function deletes a User.		// NOTE: NOT tested!
 		[HttpDelete]
-		public void DeleteUser(int _id)
+		public void DeleteUser(string _username, string _firstName)
 		{
 			List<User> _Users = _context.Users.ToList();
 
 			for (int i = 0; i < _Users.Count; i++)
 			{
-				if (_id == _Users[i].id)
+				if (_username == _Users[i].username && _firstName == _Users[i].first_name)
 				{
 					User _User = _Users[i];
 

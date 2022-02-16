@@ -9,27 +9,34 @@ declare const TradingView: any;
 })
 export class StocksComponent implements OnInit {
 
-  get stock(): string {
-    return this._stock;
-  }
-
-  @Input() set stock(newStock: string) {
-    this._stock = newStock;
-    this.createWidget(newStock);
-    console.log(newStock);
-  }
-
+  // PROPERTIES //
   _stock: string = '';
 
+  // ================================================================================ //
+
+  // METHODS //
+
+  // DEPENDENCIES
   constructor() { }
 
   ngOnInit(): void {
+  }
+  get stock(): string {
+    return this._stock;
   }
 
   ngAfterViewInit() {
     this.createWidget("TSLA");
   }
 
+  // INPUTS
+  @Input() set stock(newStock: string) {
+    this._stock = newStock;
+    this.createWidget(newStock);
+    console.log(newStock);
+  }
+
+  // TradingView
   createWidget(newStock: string) {
     new TradingView.widget(
       {
@@ -48,5 +55,4 @@ export class StocksComponent implements OnInit {
       }
     );
   }
-
 }
