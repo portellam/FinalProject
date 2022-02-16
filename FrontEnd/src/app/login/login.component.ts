@@ -19,8 +19,9 @@ export class LoginComponent implements OnInit {
     username: '',
     first_name: ''
   }
-  _firstName: string = '';
+  User_id: number = 0;
   _username: string = '';
+  _firstName: string = '';
 
   // TOGGLES
   _userVisible: boolean = this._UserService.userVisible;
@@ -156,7 +157,8 @@ export class LoginComponent implements OnInit {
     {
       if(this._username == this.Users[i].username)
       {
-        this.login(true);
+        this._User = this.Users[i];
+        this._UserService.signIn(this._User);
         alert(`Success! Login complete.`)
         // auto re-direct
         this._Router.navigate(['/']);
@@ -169,7 +171,7 @@ export class LoginComponent implements OnInit {
 
   // functions signs out user.
   signOut() {
-    this.login(false);
+    this._User = this._UserService.signOut(this._User);
     alert(`User signed out. Good bye.`)
 
     // auto re-direct
@@ -198,11 +200,6 @@ export class LoginComponent implements OnInit {
 
     // auto sign-in
     this.signIn();
-  }
-
-  // HOLD FUNCTIONS
-  login(bool: boolean) {
-    this._UserService.login(bool);
   }
 
   // TOGGLES

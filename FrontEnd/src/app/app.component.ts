@@ -27,8 +27,7 @@ export class AppComponent {
 
   // CRUD FUNCTIONS
   getLogin(){
-    this._userVisible = this._UserService.getLogin();
-  }
+    this._userVisible = this._UserService.}
 
   getUser(){
     this._username = this._UserService.get().username;

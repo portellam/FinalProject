@@ -8,15 +8,20 @@ import { User } from './user';
 export class UserService {
 
   // PROPERTIES //
-  _User: User = {
+  newUser: User = {
     id: 0,
     username: '',
     first_name: ''
   }
+  _User: User = this.newUser;
+
+  User_id: number = 0;
+  _username: string = '';
+  _firstName: string = '';
 
   // TOGGLES
   userVisible: boolean = false;
-  // ========== //
+  // ================================================================================ //
 
   // METHODS //
 
@@ -24,24 +29,21 @@ export class UserService {
   constructor(private _HttpClient: HttpClient) {
   }
 
-  // TOGGLES
-  login(bool: boolean) {
-    if(bool)
-    {
-      this.userVisible = true;
-    }
-    this._User.username = '';
-    this._User.first_name = '';
+  // Login  // TODO: this may work. do the same as userVisible. 
+  signIn(_User: User) {
+    this._User = _User;
+    this.userVisible = true;
+  }
+
+  signOut(_User: User) {
+    this._User = this.newUser;
     this.userVisible = false;
+    return this.get();
   }
 
   // CRUD FUNCTIONS
   getAll(cb: any) {
     this._HttpClient.get<User[]>(`https://localhost:7262/api/WallStreetBets?`).subscribe(cb);
-  }
-
-  getLogin(){
-    return this.userVisible;
   }
 
   get() {
@@ -61,6 +63,6 @@ export class UserService {
   delete(_User: User, cb: any) {
     this._HttpClient.delete<User>(`https://localhost:7262/api/WallStreetBets?username=${_User.username}&first_name=${_User.first_name}`).subscribe(cb);
   }
-  
-  // ========== //
+
+  // ================================================================================ //
 }
