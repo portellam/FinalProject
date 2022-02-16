@@ -76,7 +76,7 @@ namespace BackEnd.Contollers
 			}
 		}
 
-		// function deletes a User.		// NOTE: NOT tested!
+		// function deletes a User.		// NOTE: unused by FrontEnd
 		[HttpDelete]
 		public void DeleteUser(string _username, string _firstName)
 		{
