@@ -11,6 +11,7 @@ export class WallStreetBetsInfoService {
   constructor(private http: HttpClient) { }
 
   retrieveWallStreetBetsInfo(cb: any) {
+    console.log(`${environment.apiUrl}/api/WallStreetBets/nbshare`);
     this.http.get<WallStreetBetsInfo[]>(`${environment.apiUrl}/api/WallStreetBets/nbshare`).subscribe(cb);
   }
 }
