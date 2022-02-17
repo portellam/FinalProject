@@ -123,8 +123,11 @@ namespace BackEnd.Controllers
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=.\SQLEXPRESS;Database=WSBdatabase;Integrated Security=SSPI;");
+            optionsBuilder.UseSqlServer(@"Server=tcp:wsbserver.database.windows.net,1433;Initial Catalog=WSBdatabase;Persist Security Info=False;User ID=coloritoj;Password=abc12345!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
         }
     }
 
 }
+
+
+// Server=tcp:wsbserver.database.windows.net,1433;Initial Catalog=WSBdatabase;Persist Security Info=False;User ID=coloritoj;Password=abc12345!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;

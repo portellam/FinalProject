@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Favorite } from './favorite';
 import { UserService } from './user.service';
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,7 @@ export class FavoriteService {
     //alert(this.userService.getCurrent())
 
     this.http.post(
-      `https://localhost:7262/api/WallStreetBets/favorites?username=${this.userService.getCurrent()}&ticker=${ticker}`, ticker).subscribe(
+      `${environment.apiUrl}/api/WallStreetBets/favorites?username=${this.userService.getCurrent()}&ticker=${ticker}`, ticker).subscribe(
         (result: any) => {
           console.log('RESULTS FROM SAVING FAVORITE:');
           console.log(result);
