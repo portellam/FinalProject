@@ -11,6 +11,8 @@ import { UserService } from '../user.service';
 })
 export class LoginComponent implements OnInit {
 
+  // TODO: added debug. Fixed user login. Need to carry over at app component, otherwise user login clears.
+
   // PROPERTIES //
   // User
   Users: User[] = [];
@@ -19,12 +21,15 @@ export class LoginComponent implements OnInit {
     username: '',
     first_name: ''
   }
-  User_id: number = 0;
-  _username: string = '';
-  _firstName: string = '';
+  newUser: User = {
+    id: 0,
+    username: '',
+    first_name: ''
+  }
+  //_username: string = '';
 
   // TOGGLES
-  _userVisible: boolean = this._UserService.userVisible;
+  userVisible: boolean = false;
   signUpVisible: boolean = false;
   deleteVisible: boolean = false;
   editVisible: boolean = false;
@@ -49,8 +54,9 @@ export class LoginComponent implements OnInit {
     );
   }
 
-  get() {
+  getLogin() {
     this._User = this._UserService.get();
+    this.userVisible = this._UserService.getLogin();
   }
 
   post() {
@@ -58,23 +64,16 @@ export class LoginComponent implements OnInit {
   }
 
   put() {
-    this._UserService.post(this._User, this.Users);
+    this._UserService.put(this._User, this.Users);
   }
 
   // TODO: test
   delete() {
     this._UserService.delete(this._User, this.Users);
   }
-  
-  // post
-  add() {
+  // ================================================================================ //
 
-    // refresh List
-    this.get();
-
-    // add to List
-    this.post();
-  };
+  // FUNCTIONS
 
   // put
   edit() {
@@ -86,26 +85,44 @@ export class LoginComponent implements OnInit {
     {
       while (i != this._User.id)
       {
-        if(this._username == this.Users[i].username)
+        if(this.newUser.username == this.Users[i].username)
         {
           alert(`Failure! Username is already taken.`)
-          this._username = '';
+          this.clearNew();
           return;
         }
         break;
       }
     }
 
-    // no match
-    alert(`"${this._username}" is available.`);
+    if(this.newUser.username.length <= 0)
+    {
+      this.clearNew();
+      alert(`Failure! Username is invalid.`)
+      return;
+    }
 
-    // edit User
-    this._User.username = this._username;
-    this._User.first_name = this._firstName;
+    if(this.newUser.first_name.length <= 0)
+    {
+      this.clearNew();
+      alert(`Failure! First-name is invalid.`)
+      return;
+    }
 
-    // put
-    this.put();
-    alert(`Success! User updated.`)
+    if(this.newUser.username.length > 0 && this.newUser.first_name.length > 0)
+    {
+      // no match
+      alert(`"${this.newUser.username}" is available.`);
+
+      // update user
+      this._User = this.newUser;
+      this.clearNew();
+
+      // put
+      this.put();
+      this.toggleEdit();
+      alert(`Success! User updated.`)
+    }
   }
 
   // delete
@@ -113,17 +130,17 @@ export class LoginComponent implements OnInit {
   deleteThis() {
     // refresh List
     this.getAll();
+
     // sort List for username match, if true delete user.
     for(var i: number = 0; i < this.Users.length; i++)
     {
       // match
-      if(this._username == this.Users[i].username && this._firstName == this.Users[i].first_name)
+      if(this._User.username == this.Users[i].username && this._User.first_name == this.Users[i].first_name)
       {
-        // delete user
-        this._User.username = this._username;
-        this._User.first_name = this._firstName;
         // delete
         this.delete();
+        this.clear();
+        this.toggleDelete();
         alert(`Authenticated! User deleted.`)
       }
 
@@ -138,14 +155,23 @@ export class LoginComponent implements OnInit {
         alert(`Failure! First-name mis-match.`)
       }
       */
-
     }
     // no match
     alert(`"Not Authenticated! Username and/or First-name mis-match!`);
   }
-  // ================================================================================ //
 
-  // FUNCTIONS
+  // function clears interface instance.
+  clear() {
+    this._User.id = 0;
+    this._User.username = '';
+    this._User.first_name = '';
+  }
+
+  clearNew() {
+    this.newUser.id = 0;
+    this.newUser.username = '';
+    this.newUser.first_name = '';
+  }
 
   // function checks if user exists, and signs in existing user.
   signIn() {
@@ -155,23 +181,27 @@ export class LoginComponent implements OnInit {
     // sort List for match. If true, sign-in success.
     for(var i: number = 0; i < this.Users.length; i++)
     {
-      if(this._username == this.Users[i].username)
+      if(this._User.username == this.Users[i].username)
       {
-        this._User = this.Users[i];
-        this._UserService.signIn(this._User);
+        this._UserService.signIn(this.Users[i]);
+
+        this.getLogin();
         alert(`Success! Login complete.`)
+
         // auto re-direct
         this._Router.navigate(['/']);
         return;
       }
     }
-    //this._userVisible = false;
     alert(`Failure! Username does not exist.`)
   }
 
   // functions signs out user.
   signOut() {
-    this._User = this._UserService.signOut(this._User);
+    this._UserService.signOut(this._User);
+
+    this.getLogin();
+
     alert(`User signed out. Good bye.`)
 
     // auto re-direct
@@ -189,18 +219,20 @@ export class LoginComponent implements OnInit {
       if(this._User.username == this.Users[i].username)
       {
         alert(`Failure! Username is already taken.`)
-        this._User.username = '';
+        this.clear();
         return;
       }
     }
 
     // add User
-    this.add();
+    this.getAll();
+    this.post();
     alert(`Success! Registration complete.`)
 
     // auto sign-in
     this.signIn();
   }
+  // ================================================================================ //
 
   // TOGGLES
   toggleEdit() {

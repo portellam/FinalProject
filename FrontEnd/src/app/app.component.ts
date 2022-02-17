@@ -17,17 +17,19 @@ export class AppComponent {
   // TOGGLES
   _userVisible: boolean = false;
   
-  // ========== //
-
+  // ================================================================================ //
   // METHODS //
 
   // DEPENDENCIES
   constructor(private _UserService: UserService) {
+    this.getLogin();
+    this.getUser();
   }
 
   // CRUD FUNCTIONS
   getLogin(){
-    this._userVisible = this._UserService.}
+    this._userVisible = this._UserService.getLogin();
+  }
 
   getUser(){
     this._username = this._UserService.get().username;

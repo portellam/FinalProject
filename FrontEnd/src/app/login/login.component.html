@@ -1,11 +1,22 @@
-<!-- NOTE: user offline -->
-<div *ngIf="!_userVisible">
+<!-- NOTE: debug variables -->
+<br />
+login component test<br />
+_userVisible:{{userVisible}}<br />
+_User.id:{{_User.id}}<br />
+_User.username:{{_User.username}}<br />
+_User.first_name:{{_User.first_name}}<br />
+newUser.id:{{newUser.id}}<br />
+newUser.username:{{newUser.username}}<br />
+newUser.first_name:{{newUser.first_name}}<br />
+
+<!-- user offline -->
+<div *ngIf="!userVisible">
 
     <!-- Sign-Up -->
     <div *ngIf="!signUpVisible">
     <h4>Don't have account with us?&nbsp;<button (click)="toggleSignUp()" *ngIf="!signUpVisible">Sign Up</button></h4>
     <h2>Sign In:</h2>
-        Username<br /><input type="text" [(ngModel)]="_username"/>&nbsp;
+        Username<br /><input type="text" [(ngModel)]="_User.username"/>&nbsp;
         <button (click)="signIn()">Continue</button>
     </div>
 
@@ -13,17 +24,17 @@
     <div *ngIf="signUpVisible">
     <h4>Already have an account?&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button (click)="toggleSignUp()" *ngIf="signUpVisible">Sign In&nbsp;</button></h4>
     <h2>Sign Up:</h2>
-        Username<br /><input type="text" [(ngModel)]="_username"><br />
-        First Name<br /><input type="text" [(ngModel)]="_firstName">&nbsp;
+        Username<br /><input type="text" [(ngModel)]="_User.username"><br />
+        First-name<br /><input type="text" [(ngModel)]="_User.first_name">&nbsp;
         <button (click)="signUp()">Continue</button> 
     </div><br />
 </div>
 
-<!-- NOTE: user online -->
-<div *ngIf="_userVisible">
+<!-- user online -->
+<div *ngIf="userVisible">
 
     <!-- Sign-Out -->
-    <div *ngIf="_userVisible">
+    <div *ngIf="userVisible">
         <h4>Sign Out:
             <button (click)="signOut()">Continue</button>
         </h4>
@@ -33,7 +44,8 @@
     <h4 *ngIf="!editVisible">Edit your account?&nbsp;&nbsp;&nbsp;
         <button (click)="toggleEdit()" *ngIf="!editVisible">Show</button>
     </h4>
-    <!-- Delete user  
+    <!-- Delete user -->
+    <!--
     <h4 *ngIf="!deleteVisible">Delete your account?
         <button (click)="toggleDelete()" *ngIf="!deleteVisible">Show</button>
     </h4>
@@ -44,12 +56,13 @@
         <h2>Edit Account:</h2>
         <button (click)="toggleEdit()" *ngIf="editVisible">Cancel</button>
         <h4>Required *</h4>
-            *Old Username<br /><input type="text" [(ngModel)]="_username"><br />
-            *New Username<br /><input type="text" [(ngModel)]="_username"><br />
-            New First Name<br /><input type="text" [(ngModel)]="_firstName">&nbsp;           
+            *Old Username<br /><input type="text" [(ngModel)]="_User.username"><br />
+            *New Username<br /><input type="text" [(ngModel)]="newUser.username"><br />
+            New First-name<br /><input type="text" [(ngModel)]="newUser.first_name">&nbsp;           
             <button (click)="edit()">Continue</button>
     </div>
-    <!-- Delete user
+    <!-- Delete user -->
+    <!--
     <div *ngIf="deleteVisible">
         <h2>Delete Account:</h2>
         <button (click)="toggleDelete()" *ngIf="deleteVisible">Cancel</button>
