@@ -1,17 +1,17 @@
 <a routerLink="/">Home</a>&nbsp;&nbsp;
 <a *ngIf="!userVisible" routerLink="/login">Login</a><a *ngIf="!userVisible">&nbsp;&nbsp;</a>
 <a *ngIf="userVisible" routerLink="/login">Logout</a><a *ngIf="userVisible">&nbsp;&nbsp;</a>
-<a *ngIf="userVisible" routerLink="/favorite">Favorites</a><a *ngIf="userVisible">&nbsp;&nbsp;<br /></a>
-<div *ngIf="userVisible">Signed in as <b>{{_User.username}}</b>.</div>
+<a *ngIf="userVisible" routerLink="/favorite">Favorites</a><a *ngIf="userVisible">&nbsp;&nbsp;</a>
+<div *ngIf="userVisible">Signed in as <b>{{_User.username}}</b></div>
 
 <!-- NOTE: debug variables -->
-
+<!--
 <br />
 APP DEBUG<br />
 userVisible:{{userVisible}}<br />
 _User.username:{{_User.username}}<br />
 _User.first_name:{{_User.first_name}}<br />
-
+-->
 
 <router-outlet></router-outlet>
 <br />

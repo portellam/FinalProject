@@ -1,6 +1,7 @@
 import { ThisReceiver } from '@angular/compiler';
 import { Component, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
+import { AppComponent } from '../app.component';
 import { User } from '../user';
 import { UserService } from '../user.service';
 
@@ -38,9 +39,9 @@ export class LoginComponent implements OnInit {
   // METHODS //
 
   // DEPENDENCIES
-  constructor(private _UserService: UserService, private _Router:Router) {
+  constructor(private _AppComponent: AppComponent, private _UserService: UserService, private _Router:Router) {
     this.getAll();
-    this.getLogin();
+    this.inputLogin();
   }
   
   ngOnInit(): void {
@@ -53,11 +54,6 @@ export class LoginComponent implements OnInit {
         this.Users = result;
       }
     );
-  }
-
-  getLogin() {
-    this._User = this._UserService.get();
-    this.userVisible = this._UserService.getLogin();
   }
 
   post() {
@@ -74,7 +70,35 @@ export class LoginComponent implements OnInit {
   }
   // ================================================================================ //
 
+  // Login
+
+  inputLogin() {
+    this._User = this._UserService.get();
+    this.userVisible = this._UserService.getLogin();
+  }
+
+  outputLogin() {
+    this._UserService.inputLogin(this._User, this.userVisible);
+    this._AppComponent.inputLogin(this._User, this.userVisible);
+  }
+
   // FUNCTIONS
+
+  // function clears interface instance.
+  clear() {
+    this._User.id = 0;
+    this._User.username = '';
+    this._User.first_name = '';
+    this.userVisible = false;
+  }
+
+  clearNew() {
+    this.newUser.id = 0;
+    this.newUser.username = '';
+    this.newUser.first_name = '';
+  }
+
+  // CRUD ALTERNATES
 
   // put
   edit() {
@@ -88,7 +112,7 @@ export class LoginComponent implements OnInit {
       {
         if(this.newUser.username == this.Users[i].username)
         {
-          alert(`Failure! Username is already taken.`)
+          //alert(`Failure! Username is already taken.`)
           this.clearNew();
           return;
         }
@@ -99,21 +123,21 @@ export class LoginComponent implements OnInit {
     if(this.newUser.username.length <= 0)
     {
       this.clearNew();
-      alert(`Failure! Username is invalid.`)
+      //alert(`Failure! Username is invalid.`)
       return;
     }
 
     if(this.newUser.first_name.length <= 0)
     {
       this.clearNew();
-      alert(`Failure! First-name is invalid.`)
+      //alert(`Failure! First-name is invalid.`)
       return;
     }
 
     if(this.newUser.username.length > 0 && this.newUser.first_name.length > 0)
     {
       // no match
-      alert(`"${this.newUser.username}" is available.`);
+      //alert(`"${this.newUser.username}" is available.`);
 
       // update user
       this._User = this.newUser;
@@ -122,7 +146,7 @@ export class LoginComponent implements OnInit {
       // put
       this.put();
       this.toggleEdit();
-      alert(`Success! User updated.`)
+      //alert(`Success! User updated.`)
     }
   }
 
@@ -142,37 +166,26 @@ export class LoginComponent implements OnInit {
         this.delete();
         this.clear();
         this.toggleDelete();
-        alert(`Authenticated! User deleted.`)
+        //alert(`Authenticated! User deleted.`)
       }
 
       // NOTE: this code is NOT necessary, but requires a known index of the user to function.
       /*  
       else if(this._username != this.Users[i].username && this._firstName == this.Users[i].first_name)
       {
-        alert(`Failure! Username mis-match.`)
+        //alert(`Failure! Username mis-match.`)
       }
       else if(this._username == this.Users[i].username && this._firstName != this.Users[i].first_name)
       {
-        alert(`Failure! First-name mis-match.`)
+        //alert(`Failure! First-name mis-match.`)
       }
       */
     }
     // no match
-    alert(`"Not Authenticated! Username and/or First-name mis-match!`);
+    //alert(`"Not Authenticated! Username and/or First-name mis-match!`);
   }
 
-  // function clears interface instance.
-  clear() {
-    this._User.id = 0;
-    this._User.username = '';
-    this._User.first_name = '';
-  }
-
-  clearNew() {
-    this.newUser.id = 0;
-    this.newUser.username = '';
-    this.newUser.first_name = '';
-  }
+  // FUNCTIONS
 
   // function checks if user exists, and signs in existing user.
   signIn() {
@@ -184,29 +197,35 @@ export class LoginComponent implements OnInit {
     {
       if(this._User.username == this.Users[i].username)
       {
-        this._UserService.signIn(this.Users[i]);
+        //this._UserService.signIn(this.Users[i]);
+        //this._User = this.Users[i];
 
-        this.getLogin();
-        alert(`Success! Login complete.`)
+        this._User.id = this.Users[i].id;
+        this._User.username = this.Users[i].username;
+        this._User.first_name = this.Users[i].first_name;
+        this.userVisible = true;
 
+        this.outputLogin();
+
+        //alert(`Success! Login complete.`)
         // auto re-direct
-        //this._Router.navigate(['/']);///////////////////////////////////////////////////
+        this._Router.navigate(['/']); // TODO: uncomment when login works.
         return;
       }
     }
-    alert(`Failure! Username does not exist.`)
+    //alert(`Failure! Username does not exist.`)
   }
 
   // functions signs out user.
   signOut() {
-    this._UserService.signOut(this._User);
+    //this._UserService.signOut(this._User);
+    this.clear();
+    this.outputLogin();
 
-    this.getLogin();
-
-    alert(`User signed out. Good bye.`)
+    //alert(`User signed out. Good bye.`)
 
     // auto re-direct
-    //this._Router.navigate(['/']); // NOTE: leave as is.
+    this._Router.navigate(['/']); // TODO: uncomment when login works.
   }
 
   // function checks if user does NOT exist, and signs up new user.
@@ -219,7 +238,7 @@ export class LoginComponent implements OnInit {
     {
       if(this._User.username == this.Users[i].username)
       {
-        alert(`Failure! Username is already taken.`)
+        //alert(`Failure! Username is already taken.`)
         this.clear();
         return;
       }
@@ -228,7 +247,7 @@ export class LoginComponent implements OnInit {
     // add User
     this.getAll();
     this.post();
-    alert(`Success! Registration complete.`)
+    //alert(`Success! Registration complete.`)
 
     // auto sign-in
     this.signIn();
@@ -236,6 +255,7 @@ export class LoginComponent implements OnInit {
   // ================================================================================ //
 
   // TOGGLES
+
   toggleEdit() {
     if(this.deleteVisible) {
       this.toggleDelete();

@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { LoginComponent } from './login/login.component';
 import { User } from './user';
 import { UserService } from './user.service';
 
@@ -26,28 +27,11 @@ export class AppComponent {
 
   // DEPENDENCIES
   constructor(private _UserService: UserService) {
-    this.getLogin();
-    this.getAllUsers();
   }
 
-  // CRUD FUNCTIONS
-  getLogin() {
-    this._User = this._UserService.get();
-  }
-
-  getAllUsers() {
-    this.getLogin();
-    this._UserService.getAll(
-      (results: User[]) => {
-        for(var i: number = 0; i < results.length; i++)
-        {
-          if(this._User == results[i])
-          {
-            return;
-          }    
-        }
-      }
-    );
-    this.getLogin();
+  // Login
+  inputLogin(_User: User, _userVisible: boolean) {
+    this._User = _User;
+    this.userVisible = _userVisible;
   }
 }

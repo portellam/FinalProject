@@ -57,15 +57,10 @@ export class UserService {
   }
 
   // Login
-  signIn(_User: User) {
+  
+  inputLogin(_User: User, _userVisible: boolean) {
     this._User = _User;
-    this.userVisible = true;
+    this.userVisible = _userVisible;
   }
-
-  signOut(_User: User) {
-    this._User = this.newUser;
-    this.userVisible = false;
-  }
-
   // ================================================================================ //
 }
