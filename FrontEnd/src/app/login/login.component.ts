@@ -40,6 +40,7 @@ export class LoginComponent implements OnInit {
   // DEPENDENCIES
   constructor(private _UserService: UserService, private _Router:Router) {
     this.getAll();
+    this.getLogin();
   }
   
   ngOnInit(): void {
@@ -189,7 +190,7 @@ export class LoginComponent implements OnInit {
         alert(`Success! Login complete.`)
 
         // auto re-direct
-        this._Router.navigate(['/']);
+        //this._Router.navigate(['/']);///////////////////////////////////////////////////
         return;
       }
     }

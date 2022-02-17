@@ -18,7 +18,7 @@ export class UserService {
     username: '',
     first_name: ''
   }
-  
+
   // TOGGLES
   userVisible: boolean = false;
   // ================================================================================ //
@@ -56,7 +56,7 @@ export class UserService {
     this._HttpClient.delete<User>(`https://localhost:7262/api/WallStreetBets?username=${_User.username}&first_name=${_User.first_name}`).subscribe(cb);
   }
 
-  // Login  // TODO: this may work. do the same as userVisible.
+  // Login
   signIn(_User: User) {
     this._User = _User;
     this.userVisible = true;

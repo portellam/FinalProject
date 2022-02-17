@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { User } from './user';
 import { UserService } from './user.service';
 
 @Component({
@@ -11,11 +12,14 @@ export class AppComponent {
 
   // PROPERTIES //
   // User
-  _firstName: string = '';
-  _username: string = '';
+  _User: User = {
+    id: 0,
+    username: '',
+    first_name: ''
+  }
 
   // TOGGLES
-  _userVisible: boolean = false;
+  userVisible: boolean = false;
   
   // ================================================================================ //
   // METHODS //
@@ -23,16 +27,27 @@ export class AppComponent {
   // DEPENDENCIES
   constructor(private _UserService: UserService) {
     this.getLogin();
-    this.getUser();
+    this.getAllUsers();
   }
 
   // CRUD FUNCTIONS
-  getLogin(){
-    this._userVisible = this._UserService.getLogin();
+  getLogin() {
+    this._User = this._UserService.get();
   }
 
-  getUser(){
-    this._username = this._UserService.get().username;
-    this._firstName = this._UserService.get().first_name;
+  getAllUsers() {
+    this.getLogin();
+    this._UserService.getAll(
+      (results: User[]) => {
+        for(var i: number = 0; i < results.length; i++)
+        {
+          if(this._User == results[i])
+          {
+            return;
+          }    
+        }
+      }
+    );
+    this.getLogin();
   }
 }
